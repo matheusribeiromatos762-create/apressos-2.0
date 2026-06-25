@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Apressos 2.0 - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="protegerPagina(); carregarDashboard();">
+
+  <div class="app">
+    <aside class="sidebar">
+      <h2>🛒 APRESSOS</h2>
+
+      <button class="ativo">🏠 Dashboard</button>
+      <button>🛒 Caixa</button>
+      <button>📦 Produtos</button>
+      <button>📊 Estoque</button>
+      <button>📄 Relatórios</button>
+      <button>⚙️ Configurações</button>
+
+      <button class="sair" onclick="sair()">Sair</button>
+    </aside>
+
+    <main class="main">
+      <header>
+        <div>
+          <h1>Dashboard</h1>
+          <p id="usuarioLogado">Bem-vindo</p>
+        </div>
+      </header>
+
+      <section class="cards">
+        <div class="card">
+          <h3>Vendas Hoje</h3>
+          <h2 id="vendasHoje">0</h2>
+        </div>
+
+        <div class="card">
+          <h3>Total Hoje</h3>
+          <h2 id="totalHoje">R$ 0,00</h2>
+        </div>
+
+        <div class="card">
+          <h3>Produtos</h3>
+          <h2 id="produtos">0</h2>
+        </div>
+
+        <div class="card alerta">
+          <h3>Estoque Baixo</h3>
+          <h2 id="estoqueBaixo">0</h2>
+        </div>
+      </section>
+
+      <section class="painel">
+        <h2>Apressos 2.0 iniciado com sucesso ✅</h2>
+        <p>Próxima etapa: cadastro de produtos, categorias e estoque.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

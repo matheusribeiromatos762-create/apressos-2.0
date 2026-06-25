@@ -1,0 +1,168 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #eef2f5;
+}
+
+.login-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0b2f6b, #1f7a3f);
+}
+
+.login-box {
+  width: 360px;
+  background: white;
+  padding: 32px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+}
+
+.login-box h1 {
+  margin: 0;
+  color: #0b2f6b;
+}
+
+.login-box p {
+  color: #555;
+  margin-bottom: 25px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #1f7a3f;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+small {
+  display: block;
+  margin-top: 18px;
+  color: #777;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background: #0b2f6b;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 25px;
+}
+
+.sidebar button {
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.12);
+  text-align: left;
+}
+
+.sidebar button.ativo {
+  background: #1f7a3f;
+}
+
+.sidebar .sair {
+  background: #c0392b;
+  margin-top: 40px;
+}
+
+.main {
+  flex: 1;
+  padding: 25px;
+}
+
+header {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+header h1 {
+  margin: 0;
+  color: #0b2f6b;
+}
+
+header p {
+  margin: 5px 0 0;
+  color: #555;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+  margin: 0;
+  color: #555;
+}
+
+.card h2 {
+  margin: 12px 0 0;
+  font-size: 34px;
+  color: #0b2f6b;
+}
+
+.card.alerta h2 {
+  color: #c0392b;
+}
+
+.painel {
+  margin-top: 20px;
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
