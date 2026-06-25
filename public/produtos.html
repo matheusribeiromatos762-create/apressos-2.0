@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Apressos 2.0</title>
+
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/assets/css/produtos.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            🛒 APRESSOS
+        </div>
+
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="#">🧾 Caixa</a>
+        <a class="ativo" href="produtos.html">📦 Produtos</a>
+        <a href="#">📊 Estoque</a>
+        <a href="#">👥 Clientes</a>
+        <a href="#">🚚 Fornecedores</a>
+        <a href="#">📄 Relatórios</a>
+        <a href="#">👤 Usuários</a>
+        <a href="#">⚙️ Configurações</a>
+
+        <button class="btn-sair">
+            Sair
+        </button>
+
+    </aside>
+
+    <main class="conteudo">
+
+        <div class="topbar">
+
+            <h1>Cadastro de Produtos</h1>
+
+        </div>
+
+        <div class="card">
+
+            <div class="linha">
+
+                <div class="campo">
+                    <label>Nome</label>
+                    <input type="text" id="nome">
+                </div>
+
+                <div class="campo">
+                    <label>Código de Barras</label>
+                    <input type="text" id="codigo">
+                </div>
+
+            </div>
+
+            <div class="linha">
+
+                <div class="campo">
+                    <label>Categoria</label>
+                    <select id="categoria">
+                        <option>Selecione</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Marca</label>
+                    <input type="text" id="marca">
+                </div>
+
+            </div>
+
+            <div class="linha">
+
+                <div class="campo">
+                    <label>Preço de Custo</label>
+                    <input type="number" id="custo">
+                </div>
+
+                <div class="campo">
+                    <label>Preço de Venda</label>
+                    <input type="number" id="preco">
+                </div>
+
+            </div>
+
+            <div class="linha">
+
+                <div class="campo">
+                    <label>Estoque</label>
+                    <input type="number" id="estoque">
+                </div>
+
+                <div class="campo">
+                    <label>Estoque Mínimo</label>
+                    <input type="number" id="estoqueMinimo">
+                </div>
+
+            </div>
+
+            <div class="botoes">
+
+                <button type="button" class="salvar" id="btnSalvar" onclick="salvarProduto()">
+    Salvar Produto
+</button>
+
+                <button class="cancelar">
+                    Limpar
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Lista de Produtos</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Código</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Estoque</th>
+                        <th>Ações</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="listaProdutos">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="/assets/js/global.js"></script>
+<script src="/assets/js/produtos.js"></script>
+
+</body>
+
+</html>
