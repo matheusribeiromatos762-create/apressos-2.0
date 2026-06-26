@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios - Apressos 2.0</title>
+
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/assets/css/relatorios.css">
+</head>
+
+<body onload="carregarLayout('relatorios')">
+
+<div class="layout">
+    <aside class="sidebar"></aside>
+
+    <main class="conteudo">
+        <header class="topbar">
+            <div>
+                <h1>Relatórios de Vendas</h1>
+                <p>Histórico de vendas finalizadas</p>
+            </div>
+
+            <div class="status">
+                <span class="online"></span>
+                Relatórios
+            </div>
+        </header>
+
+        <section class="cards-relatorio">
+            <div class="card-info">
+                <p>Total de Vendas</p>
+                <h2 id="totalVendas">0</h2>
+            </div>
+
+            <div class="card-info money">
+                <p>Valor Vendido</p>
+                <h2 id="valorVendido">R$ 0,00</h2>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="topo-card">
+                <h2>Vendas Realizadas</h2>
+                <button onclick="carregarRelatorios()">Atualizar</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nº Venda</th>
+                        <th>Total</th>
+                        <th>Recebido</th>
+                        <th>Troco</th>
+                        <th>Pagamento</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaRelatorios"></tbody>
+            </table>
+        </section>
+    </main>
+</div>
+
+<script src="/assets/js/global.js"></script>
+<script src="/assets/js/layout.js"></script>
+<script src="/assets/js/relatorios.js"></script>
+
+</body>
+</html>

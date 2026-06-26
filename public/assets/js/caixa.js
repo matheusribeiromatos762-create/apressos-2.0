@@ -1,5 +1,8 @@
 let produtosDisponiveis = [];
 let itensVenda = [];
+let valorRecebidoInformado = null;
+let modalAberto = false;
+let formaPagamento = "DINHEIRO";
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarProdutosCaixa();
@@ -7,15 +10,75 @@ document.addEventListener("DOMContentLoaded", () => {
     const campoCodigo = document.getElementById("codigoVenda");
 
     campoCodigo.addEventListener("keydown", (evento) => {
-        if (evento.key === "Enter") {
+        if (evento.key === "Enter" && !modalAberto) {
             buscarProdutoVenda();
         }
     });
+
+    document.addEventListener("keydown", (evento) => {
+        if (modalAberto) {
+            if (evento.key === "Enter") {
+                evento.preventDefault();
+                confirmarVenda();
+            }
+
+            if (evento.key === "Escape") {
+                evento.preventDefault();
+                fecharModalVenda();
+            }
+
+            return;
+        }
+
+        if (evento.key === "F1") {
+            evento.preventDefault();
+            prepararFinalizacao("DINHEIRO");
+        }
+
+        if (evento.key === "F2") {
+            evento.preventDefault();
+            prepararFinalizacao("CARTÃO");
+        }
+
+        if (evento.key === "F3") {
+            evento.preventDefault();
+            prepararFinalizacao("PIX");
+        }
+
+        if (evento.key === "F4") {
+            evento.preventDefault();
+            informarValorRecebido();
+        }
+    });
+
+    document.getElementById("btnSim").addEventListener("click", confirmarVenda);
+    document.getElementById("btnNao").addEventListener("click", fecharModalVenda);
+
+    atualizarFormaPagamento();
 });
 
 async function carregarProdutosCaixa() {
     const resposta = await fetch("/api/produtos");
     produtosDisponiveis = await resposta.json();
+}
+
+function prepararFinalizacao(tipo) {
+    if (itensVenda.length === 0) {
+        alert("Nenhum produto na venda");
+        return;
+    }
+
+    formaPagamento = tipo;
+    atualizarFormaPagamento();
+    abrirModalVenda();
+}
+
+function atualizarFormaPagamento() {
+    const campo = document.getElementById("formaPagamentoAtual");
+
+    if (campo) {
+        campo.innerText = formaPagamento;
+    }
 }
 
 function buscarProdutoVenda() {
@@ -51,7 +114,6 @@ function buscarProdutoVenda() {
 
 function adicionarProdutoNaVenda(produto) {
     const itemExistente = itensVenda.find((item) => item.id === produto.id);
-
     const estoqueDisponivel = Number(produto.estoque || 0);
 
     if (itemExistente) {
@@ -136,24 +198,83 @@ function removerItem(index) {
     atualizarTabelaVenda();
 }
 
-function atualizarTotalVenda() {
-    const total = calcularTotal();
-
-    document.getElementById("totalVenda").innerText = formatarDinheiroCaixa(total);
-
-    calcularTroco();
-}
-
 function calcularTotal() {
     return itensVenda.reduce((soma, item) => soma + item.total, 0);
 }
 
-function calcularTroco() {
-    const total = calcularTotal();
-    const recebido = Number(document.getElementById("valorRecebido").value || 0);
-    const troco = recebido - total;
+function atualizarTotalVenda() {
+    document.getElementById("totalVenda").innerText = formatarDinheiroCaixa(calcularTotal());
+    atualizarTrocoOuFalta();
+}
 
-    document.getElementById("trocoVenda").innerText = formatarDinheiroCaixa(troco > 0 ? troco : 0);
+function informarValorRecebido() {
+    const total = calcularTotal();
+
+    if (itensVenda.length === 0) {
+        alert("Nenhum produto na venda");
+        return;
+    }
+
+    const valor = prompt(`Total da venda: ${formatarDinheiroCaixa(total)}\nDigite o valor recebido:`);
+
+    if (valor === null || valor.trim() === "") {
+        valorRecebidoInformado = null;
+        document.getElementById("valorRecebido").value = "";
+        atualizarTrocoOuFalta();
+        return;
+    }
+
+    valorRecebidoInformado = Number(valor.replace(",", "."));
+    document.getElementById("valorRecebido").value = valorRecebidoInformado;
+
+    atualizarTrocoOuFalta();
+}
+
+function calcularTroco() {
+    const valor = document.getElementById("valorRecebido").value;
+    valorRecebidoInformado = valor ? Number(valor) : null;
+    atualizarTrocoOuFalta();
+}
+
+function atualizarTrocoOuFalta() {
+    const total = calcularTotal();
+    const campoTroco = document.getElementById("trocoVenda");
+
+    if (valorRecebidoInformado === null) {
+        campoTroco.innerText = "Pagamento exato";
+        campoTroco.style.color = "#198754";
+        return;
+    }
+
+    const diferenca = valorRecebidoInformado - total;
+
+    if (diferenca >= 0) {
+        campoTroco.innerText = `Troco: ${formatarDinheiroCaixa(diferenca)}`;
+        campoTroco.style.color = "#198754";
+    } else {
+        campoTroco.innerText = `Falta: ${formatarDinheiroCaixa(Math.abs(diferenca))}`;
+        campoTroco.style.color = "#dc3545";
+    }
+}
+
+function abrirModalVenda() {
+    modalAberto = true;
+
+    document.getElementById("modalTextoFinalizar").innerText =
+        `Deseja finalizar a venda em ${formaPagamento}?`;
+
+    document.getElementById("modalFinalizar").style.display = "flex";
+}
+
+function fecharModalVenda() {
+    modalAberto = false;
+    document.getElementById("modalFinalizar").style.display = "none";
+    document.getElementById("codigoVenda").focus();
+}
+
+async function confirmarVenda() {
+    fecharModalVenda();
+    await finalizarVenda();
 }
 
 async function finalizarVenda() {
@@ -163,14 +284,12 @@ async function finalizarVenda() {
     }
 
     const total = calcularTotal();
-    const recebido = Number(document.getElementById("valorRecebido").value || 0);
 
-    if (recebido < total) {
-        alert("Valor recebido menor que o total da venda");
-        return;
-    }
+    const recebido = valorRecebidoInformado === null
+        ? total
+        : valorRecebidoInformado;
 
-    const troco = recebido - total;
+    const troco = recebido > total ? recebido - total : 0;
 
     const resposta = await fetch("/api/vendas", {
         method: "POST",
@@ -181,7 +300,8 @@ async function finalizarVenda() {
             itens: itensVenda,
             total,
             valor_recebido: recebido,
-            troco
+            troco,
+            forma_pagamento: formaPagamento
         })
     });
 
@@ -192,7 +312,7 @@ async function finalizarVenda() {
         return;
     }
 
-    alert("Venda finalizada com sucesso!");
+    alert(`Venda finalizada em ${formaPagamento}`);
 
     cancelarVenda();
     carregarProdutosCaixa();
@@ -200,11 +320,15 @@ async function finalizarVenda() {
 
 function cancelarVenda() {
     itensVenda = [];
+    valorRecebidoInformado = null;
+    formaPagamento = "DINHEIRO";
 
     document.getElementById("valorRecebido").value = "";
     document.getElementById("codigoVenda").value = "";
 
     atualizarTabelaVenda();
+    atualizarTrocoOuFalta();
+    atualizarFormaPagamento();
 
     document.getElementById("codigoVenda").focus();
 }

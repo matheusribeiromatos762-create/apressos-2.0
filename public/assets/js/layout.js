@@ -13,7 +13,7 @@ function carregarLayout(paginaAtual) {
         <a class="${paginaAtual === "estoque" ? "ativo" : ""}" href="estoque.html">📊 Estoque</a>
         <a href="#">👥 Clientes</a>
         <a href="#">🚚 Fornecedores</a>
-        <a href="#">📄 Relatórios</a>
+        <a class="${paginaAtual === "relatorios" ? "ativo" : ""}" href="relatorios.html">📄 Relatórios</a>
         <a href="#">👤 Usuários</a>
         <a href="#">⚙️ Configurações</a>
 

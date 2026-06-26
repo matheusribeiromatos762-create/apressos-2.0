@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,11 +12,9 @@
 <body onload="carregarLayout('caixa')">
 
 <div class="layout">
-
     <aside class="sidebar"></aside>
 
     <main class="conteudo">
-
         <header class="topbar">
             <div>
                 <h1>Caixa PDV</h1>
@@ -31,21 +28,16 @@
         </header>
 
         <section class="pdv">
-
             <div class="venda">
-
                 <div class="card">
                     <label>Código de Barras / Código Interno</label>
-                    <input
-                        type="text"
-                        id="codigoVenda"
-                        placeholder="Digite ou escaneie o código"
-                        autofocus
-                    >
+                    <input type="text" id="codigoVenda" placeholder="Digite ou escaneie o código" autofocus>
 
-                    <button onclick="buscarProdutoVenda()">
-                        Adicionar Produto
-                    </button>
+                    <button onclick="buscarProdutoVenda()">Adicionar Produto</button>
+
+                    <div class="atalhos">
+                        ENTER = Adicionar | F1 = Dinheiro | F2 = Cartão | F3 = PIX | F4 = Valor Recebido
+                    </div>
                 </div>
 
                 <div class="card">
@@ -66,11 +58,9 @@
                         <tbody id="listaVenda"></tbody>
                     </table>
                 </div>
-
             </div>
 
             <div class="resumo">
-
                 <div class="card total-card">
                     <p>Total da Venda</p>
                     <h1 id="totalVenda">R$ 0,00</h1>
@@ -78,33 +68,45 @@
 
                 <div class="card">
                     <label>Valor Recebido</label>
-                    <input
-                        type="number"
-                        id="valorRecebido"
-                        placeholder="0.00"
-                        oninput="calcularTroco()"
-                    >
+                    <input type="number" id="valorRecebido" placeholder="Opcional" oninput="calcularTroco()">
 
-                    <label>Troco</label>
-                    <h2 id="trocoVenda">R$ 0,00</h2>
+                    <label>Situação</label>
+                    <h2 id="trocoVenda">Pagamento exato</h2>
+                </div>
+
+                <div class="card">
+                    <label>Forma de Pagamento</label>
+                    <h2 id="formaPagamentoAtual">DINHEIRO</h2>
+
+                    <p><strong>F1</strong> Dinheiro</p>
+                    <p><strong>F2</strong> Cartão</p>
+                    <p><strong>F3</strong> PIX</p>
+                    <p><strong>F4</strong> Valor recebido</p>
                 </div>
 
                 <div class="card botoes-caixa">
-                    <button class="finalizar" onclick="finalizarVenda()">
-                        Finalizar Venda
-                    </button>
-
-                    <button class="cancelar" onclick="cancelarVenda()">
-                        Cancelar Venda
-                    </button>
+                    <button class="finalizar" onclick="prepararFinalizacao('DINHEIRO')">Finalizar Dinheiro</button>
+                    <button class="cancelar" onclick="cancelarVenda()">Cancelar Venda</button>
                 </div>
-
             </div>
-
         </section>
-
     </main>
+</div>
 
+<div id="modalFinalizar" class="modal-finalizar">
+    <div class="modal-box">
+        <h2 id="modalTextoFinalizar">Deseja finalizar a venda?</h2>
+
+        <p>
+            ENTER = Sim<br>
+            ESC = Não
+        </p>
+
+        <div class="modal-botoes">
+            <button id="btnSim">Sim</button>
+            <button id="btnNao">Não</button>
+        </div>
+    </div>
 </div>
 
 <script src="/assets/js/global.js"></script>

@@ -37,6 +37,7 @@ db.serialize(() => {
             total REAL,
             valor_recebido REAL,
             troco REAL,
+            forma_pagamento TEXT DEFAULT 'DINHEIRO',
             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `);
@@ -53,6 +54,10 @@ db.serialize(() => {
             total REAL
         )
     `);
+
+    db.run(`
+        ALTER TABLE vendas ADD COLUMN forma_pagamento TEXT DEFAULT 'DINHEIRO'
+    `, () => {});
 });
 
 module.exports = db;

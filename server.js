@@ -41,12 +41,20 @@ app.get("/api/dashboard", (req, res) => {
             (erro2, estoqueBaixo) => {
                 if (erro2) return res.status(500).json({ erro: erro2.message });
 
-                res.json({
-                    vendasHoje: 0,
-                    totalHoje: 0,
-                    produtos: produtos.total || 0,
-                    estoqueBaixo: estoqueBaixo.total || 0
-                });
+                db.get(
+                    "SELECT COUNT(*) AS totalVendas, COALESCE(SUM(total), 0) AS totalHoje FROM vendas WHERE DATE(criado_em) = DATE('now')",
+                    [],
+                    (erro3, vendas) => {
+                        if (erro3) return res.status(500).json({ erro: erro3.message });
+
+                        res.json({
+                            vendasHoje: vendas.totalVendas || 0,
+                            totalHoje: vendas.totalHoje || 0,
+                            produtos: produtos.total || 0,
+                            estoqueBaixo: estoqueBaixo.total || 0
+                        });
+                    }
+                );
             }
         );
     });
@@ -203,15 +211,20 @@ app.delete("/api/categorias/:id", (req, res) => {
 /* VENDAS */
 
 app.post("/api/vendas", (req, res) => {
-    const { itens, total, valor_recebido, troco } = req.body;
+    const { itens, total, valor_recebido, troco, forma_pagamento } = req.body;
 
     if (!itens || itens.length === 0) {
         return res.status(400).json({ erro: "Nenhum item na venda" });
     }
 
     db.run(
-        "INSERT INTO vendas (total, valor_recebido, troco) VALUES (?, ?, ?)",
-        [Number(total || 0), Number(valor_recebido || 0), Number(troco || 0)],
+        "INSERT INTO vendas (total, valor_recebido, troco, forma_pagamento) VALUES (?, ?, ?, ?)",
+        [
+            Number(total || 0),
+            Number(valor_recebido || 0),
+            Number(troco || 0),
+            forma_pagamento || "DINHEIRO"
+        ],
         function (erro) {
             if (erro) return res.status(500).json({ erro: erro.message });
 
