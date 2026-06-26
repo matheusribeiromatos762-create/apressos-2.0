@@ -35,21 +35,31 @@ function buscarProdutoVenda() {
 
     if (!produto) {
         alert("Produto não encontrado");
-        document.getElementById("codigoVenda").value = "";
-        document.getElementById("codigoVenda").focus();
+        limparCampoCodigo();
+        return;
+    }
+
+    if (Number(produto.estoque || 0) <= 0) {
+        alert("Produto sem estoque");
+        limparCampoCodigo();
         return;
     }
 
     adicionarProdutoNaVenda(produto);
-
-    document.getElementById("codigoVenda").value = "";
-    document.getElementById("codigoVenda").focus();
+    limparCampoCodigo();
 }
 
 function adicionarProdutoNaVenda(produto) {
     const itemExistente = itensVenda.find((item) => item.id === produto.id);
 
+    const estoqueDisponivel = Number(produto.estoque || 0);
+
     if (itemExistente) {
+        if (itemExistente.quantidade + 1 > estoqueDisponivel) {
+            alert("Quantidade maior que o estoque disponível");
+            return;
+        }
+
         itemExistente.quantidade += 1;
         itemExistente.total = itemExistente.quantidade * itemExistente.preco;
     } else {
@@ -59,7 +69,8 @@ function adicionarProdutoNaVenda(produto) {
             nome: produto.nome,
             preco: Number(produto.preco || 0),
             quantidade: 1,
-            total: Number(produto.preco || 0)
+            total: Number(produto.preco || 0),
+            estoque: estoqueDisponivel
         });
     }
 
@@ -68,7 +79,6 @@ function adicionarProdutoNaVenda(produto) {
 
 function atualizarTabelaVenda() {
     const tabela = document.getElementById("listaVenda");
-
     tabela.innerHTML = "";
 
     itensVenda.forEach((item, index) => {
@@ -76,7 +86,11 @@ function atualizarTabelaVenda() {
             <tr>
                 <td>${item.codigo}</td>
                 <td>${item.nome}</td>
-                <td>${item.quantidade}</td>
+                <td>
+                    <button onclick="diminuirQuantidade(${index})">-</button>
+                    ${item.quantidade}
+                    <button onclick="aumentarQuantidade(${index})">+</button>
+                </td>
                 <td>${formatarDinheiroCaixa(item.preco)}</td>
                 <td>${formatarDinheiroCaixa(item.total)}</td>
                 <td>
@@ -89,36 +103,99 @@ function atualizarTabelaVenda() {
     atualizarTotalVenda();
 }
 
+function aumentarQuantidade(index) {
+    const item = itensVenda[index];
+
+    if (item.quantidade + 1 > item.estoque) {
+        alert("Quantidade maior que o estoque disponível");
+        return;
+    }
+
+    item.quantidade += 1;
+    item.total = item.quantidade * item.preco;
+
+    atualizarTabelaVenda();
+}
+
+function diminuirQuantidade(index) {
+    const item = itensVenda[index];
+
+    if (item.quantidade <= 1) {
+        removerItem(index);
+        return;
+    }
+
+    item.quantidade -= 1;
+    item.total = item.quantidade * item.preco;
+
+    atualizarTabelaVenda();
+}
+
 function removerItem(index) {
     itensVenda.splice(index, 1);
     atualizarTabelaVenda();
 }
 
 function atualizarTotalVenda() {
-    const total = itensVenda.reduce((soma, item) => soma + item.total, 0);
+    const total = calcularTotal();
 
     document.getElementById("totalVenda").innerText = formatarDinheiroCaixa(total);
 
     calcularTroco();
 }
 
+function calcularTotal() {
+    return itensVenda.reduce((soma, item) => soma + item.total, 0);
+}
+
 function calcularTroco() {
-    const total = itensVenda.reduce((soma, item) => soma + item.total, 0);
+    const total = calcularTotal();
     const recebido = Number(document.getElementById("valorRecebido").value || 0);
     const troco = recebido - total;
 
     document.getElementById("trocoVenda").innerText = formatarDinheiroCaixa(troco > 0 ? troco : 0);
 }
 
-function finalizarVenda() {
+async function finalizarVenda() {
     if (itensVenda.length === 0) {
         alert("Nenhum produto na venda");
+        return;
+    }
+
+    const total = calcularTotal();
+    const recebido = Number(document.getElementById("valorRecebido").value || 0);
+
+    if (recebido < total) {
+        alert("Valor recebido menor que o total da venda");
+        return;
+    }
+
+    const troco = recebido - total;
+
+    const resposta = await fetch("/api/vendas", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            itens: itensVenda,
+            total,
+            valor_recebido: recebido,
+            troco
+        })
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+        alert(dados.erro || "Erro ao finalizar venda");
         return;
     }
 
     alert("Venda finalizada com sucesso!");
 
     cancelarVenda();
+    carregarProdutosCaixa();
 }
 
 function cancelarVenda() {
@@ -129,6 +206,11 @@ function cancelarVenda() {
 
     atualizarTabelaVenda();
 
+    document.getElementById("codigoVenda").focus();
+}
+
+function limparCampoCodigo() {
+    document.getElementById("codigoVenda").value = "";
     document.getElementById("codigoVenda").focus();
 }
 

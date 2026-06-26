@@ -9,7 +9,6 @@ const db = new sqlite3.Database("./apressos.db", (err) => {
 });
 
 db.serialize(() => {
-
     db.run(`
         CREATE TABLE IF NOT EXISTS produtos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,6 +31,28 @@ db.serialize(() => {
         )
     `);
 
+    db.run(`
+        CREATE TABLE IF NOT EXISTS vendas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            total REAL,
+            valor_recebido REAL,
+            troco REAL,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS venda_itens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            venda_id INTEGER,
+            produto_id INTEGER,
+            codigo TEXT,
+            nome TEXT,
+            quantidade INTEGER,
+            preco REAL,
+            total REAL
+        )
+    `);
 });
 
 module.exports = db;
