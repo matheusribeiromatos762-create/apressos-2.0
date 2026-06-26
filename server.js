@@ -26,92 +26,39 @@ async function iniciarBanco() {
     return;
   }
 
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS usuarios (
-      id SERIAL PRIMARY KEY,
-      nome TEXT NOT NULL,
-      usuario TEXT UNIQUE NOT NULL,
-      senha TEXT NOT NULL,
-      cargo TEXT NOT NULL DEFAULT 'ADMIN',
-      ativo BOOLEAN DEFAULT true,
-      criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  await pool.query(`
-    INSERT INTO usuarios (nome, usuario, senha, cargo)
-    VALUES ('Matheus', 'admin', '123456', 'ADMIN')
-    ON CONFLICT (usuario) DO NOTHING
-  `);
-
   console.log("Banco PostgreSQL conectado");
 }
 
-/* PÁGINA INICIAL */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
-/* LOGIN */
 app.post("/api/login", async (req, res) => {
-  try {
-    const { usuario, senha } = req.body;
+  const { usuario, senha } = req.body;
 
-    if (!usuario || !senha) {
-      return res.status(400).json({ erro: "Informe usuário e senha" });
-    }
-
-    if (!pool) {
-      if (usuario === "admin" && senha === "123456") {
-        return res.json({
-          sucesso: true,
-          usuario: {
-            nome: "Matheus",
-            usuario: "admin",
-            cargo: "ADMIN"
-          }
-        });
-      }
-
-      return res.status(401).json({ erro: "Usuário ou senha inválidos" });
-    }
-
-    const resultado = await pool.query(
-      `
-      SELECT id, nome, usuario, cargo
-      FROM usuarios
-      WHERE usuario = $1 AND senha = $2 AND ativo = true
-      `,
-      [usuario, senha]
-    );
-
-    if (resultado.rowCount === 0) {
-      return res.status(401).json({ erro: "Usuário ou senha inválidos" });
-    }
-
-    res.json({
+  if (usuario === "admin" && senha === "123456") {
+    return res.json({
       sucesso: true,
-      usuario: resultado.rows[0]
+      usuario: {
+        nome: "Matheus",
+        usuario: "admin",
+        cargo: "ADMIN"
+      }
     });
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
   }
+
+  res.status(401).json({ erro: "Usuário ou senha inválidos" });
 });
 
-/* DASHBOARD */
 app.get("/api/dashboard", (req, res) => {
   db.get("SELECT COUNT(*) AS total FROM produtos", [], (erro, produtos) => {
-    if (erro) {
-      return res.status(500).json({ erro: erro.message });
-    }
+    if (erro) return res.status(500).json({ erro: erro.message });
 
     db.get(
       "SELECT COUNT(*) AS total FROM produtos WHERE estoque <= estoque_minimo",
       [],
       (erro2, estoqueBaixo) => {
-        if (erro2) {
-          return res.status(500).json({ erro: erro2.message });
-        }
+        if (erro2) return res.status(500).json({ erro: erro2.message });
 
         res.json({
           vendasHoje: 0,
@@ -124,18 +71,14 @@ app.get("/api/dashboard", (req, res) => {
   });
 });
 
-/* PRODUTOS - LISTAR */
+/* PRODUTOS */
 app.get("/api/produtos", (req, res) => {
   db.all("SELECT * FROM produtos ORDER BY id DESC", [], (erro, linhas) => {
-    if (erro) {
-      return res.status(500).json({ erro: erro.message });
-    }
-
+    if (erro) return res.status(500).json({ erro: erro.message });
     res.json(linhas);
   });
 });
 
-/* PRODUTOS - CADASTRAR */
 app.post("/api/produtos", (req, res) => {
   const {
     codigo_barras,
@@ -153,9 +96,7 @@ app.post("/api/produtos", (req, res) => {
   }
 
   db.get("SELECT COUNT(*) AS total FROM produtos", [], (erro, resultado) => {
-    if (erro) {
-      return res.status(500).json({ erro: erro.message });
-    }
+    if (erro) return res.status(500).json({ erro: erro.message });
 
     const proximoCodigo = String(resultado.total + 1).padStart(6, "0");
 
@@ -177,9 +118,7 @@ app.post("/api/produtos", (req, res) => {
         Number(estoque_minimo || 0)
       ],
       function (erro) {
-        if (erro) {
-          return res.status(500).json({ erro: erro.message });
-        }
+        if (erro) return res.status(500).json({ erro: erro.message });
 
         res.json({
           sucesso: true,
@@ -191,31 +130,68 @@ app.post("/api/produtos", (req, res) => {
   });
 });
 
-/* PRODUTOS - EXCLUIR */
 app.delete("/api/produtos/:id", (req, res) => {
-  const { id } = req.params;
-
-  db.run("DELETE FROM produtos WHERE id = ?", [id], function (erro) {
-    if (erro) {
-      return res.status(500).json({ erro: erro.message });
-    }
-
+  db.run("DELETE FROM produtos WHERE id = ?", [req.params.id], function (erro) {
+    if (erro) return res.status(500).json({ erro: erro.message });
     res.json({ sucesso: true });
   });
 });
 
-/* CATEGORIAS - LISTAR */
-app.get("/api/categorias", (req, res) => {
-  db.all("SELECT * FROM categorias ORDER BY nome ASC", [], (erro, linhas) => {
-    if (erro) {
-      return res.status(500).json({ erro: erro.message });
+/* ALTERAR ESTOQUE */
+app.put("/api/produtos/:id/estoque", (req, res) => {
+  const { id } = req.params;
+  const { tipo, quantidade } = req.body;
+
+  const qtd = Number(quantidade);
+
+  if (!tipo || isNaN(qtd)) {
+    return res.status(400).json({ erro: "Informe tipo e quantidade" });
+  }
+
+  db.get("SELECT * FROM produtos WHERE id = ?", [id], (erro, produto) => {
+    if (erro) return res.status(500).json({ erro: erro.message });
+
+    if (!produto) {
+      return res.status(404).json({ erro: "Produto não encontrado" });
     }
 
+    let novoEstoque = Number(produto.estoque || 0);
+
+    if (tipo === "entrada") {
+      novoEstoque += qtd;
+    } else if (tipo === "saida") {
+      novoEstoque -= qtd;
+    } else if (tipo === "ajuste") {
+      novoEstoque = qtd;
+    } else {
+      return res.status(400).json({ erro: "Tipo inválido" });
+    }
+
+    if (novoEstoque < 0) novoEstoque = 0;
+
+    db.run(
+      "UPDATE produtos SET estoque = ? WHERE id = ?",
+      [novoEstoque, id],
+      function (erro2) {
+        if (erro2) return res.status(500).json({ erro: erro2.message });
+
+        res.json({
+          sucesso: true,
+          estoque: novoEstoque
+        });
+      }
+    );
+  });
+});
+
+/* CATEGORIAS */
+app.get("/api/categorias", (req, res) => {
+  db.all("SELECT * FROM categorias ORDER BY nome ASC", [], (erro, linhas) => {
+    if (erro) return res.status(500).json({ erro: erro.message });
     res.json(linhas);
   });
 });
 
-/* CATEGORIAS - CADASTRAR */
 app.post("/api/categorias", (req, res) => {
   const { nome } = req.body;
 
@@ -241,20 +217,13 @@ app.post("/api/categorias", (req, res) => {
   );
 });
 
-/* CATEGORIAS - EXCLUIR */
 app.delete("/api/categorias/:id", (req, res) => {
-  const { id } = req.params;
-
-  db.run("DELETE FROM categorias WHERE id = ?", [id], function (erro) {
-    if (erro) {
-      return res.status(500).json({ erro: erro.message });
-    }
-
+  db.run("DELETE FROM categorias WHERE id = ?", [req.params.id], function (erro) {
+    if (erro) return res.status(500).json({ erro: erro.message });
     res.json({ sucesso: true });
   });
 });
 
-/* INICIAR SERVIDOR */
 iniciarBanco()
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
