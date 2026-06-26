@@ -7,7 +7,7 @@ function carregarLayout(paginaAtual) {
         <div class="logo">🛒 APRESSOS</div>
 
         <a class="${paginaAtual === "dashboard" ? "ativo" : ""}" href="dashboard.html">🏠 Dashboard</a>
-        <a class="${paginaAtual === "caixa" ? "ativo" : ""}" href="#">🧾 Caixa</a>
+        <a class="${paginaAtual === "caixa" ? "ativo" : ""}" href="caixa.html">🧾 Caixa</a>
         <a class="${paginaAtual === "produtos" ? "ativo" : ""}" href="produtos.html">📦 Produtos</a>
         <a class="${paginaAtual === "categorias" ? "ativo" : ""}" href="categorias.html">🏷️ Categorias</a>
         <a class="${paginaAtual === "estoque" ? "ativo" : ""}" href="estoque.html">📊 Estoque</a>

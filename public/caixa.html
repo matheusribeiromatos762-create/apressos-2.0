@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa - Apressos 2.0</title>
+
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/assets/css/caixa.css">
+</head>
+
+<body onload="carregarLayout('caixa')">
+
+<div class="layout">
+
+    <aside class="sidebar"></aside>
+
+    <main class="conteudo">
+
+        <header class="topbar">
+            <div>
+                <h1>Caixa PDV</h1>
+                <p>Venda rápida com código de barras</p>
+            </div>
+
+            <div class="status">
+                <span class="online"></span>
+                Caixa Aberto
+            </div>
+        </header>
+
+        <section class="pdv">
+
+            <div class="venda">
+
+                <div class="card">
+                    <label>Código de Barras / Código Interno</label>
+                    <input
+                        type="text"
+                        id="codigoVenda"
+                        placeholder="Digite ou escaneie o código"
+                        autofocus
+                    >
+
+                    <button onclick="buscarProdutoVenda()">
+                        Adicionar Produto
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h2>Itens da Venda</h2>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Produto</th>
+                                <th>Qtd</th>
+                                <th>Unitário</th>
+                                <th>Total</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="listaVenda"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="resumo">
+
+                <div class="card total-card">
+                    <p>Total da Venda</p>
+                    <h1 id="totalVenda">R$ 0,00</h1>
+                </div>
+
+                <div class="card">
+                    <label>Valor Recebido</label>
+                    <input
+                        type="number"
+                        id="valorRecebido"
+                        placeholder="0.00"
+                        oninput="calcularTroco()"
+                    >
+
+                    <label>Troco</label>
+                    <h2 id="trocoVenda">R$ 0,00</h2>
+                </div>
+
+                <div class="card botoes-caixa">
+                    <button class="finalizar" onclick="finalizarVenda()">
+                        Finalizar Venda
+                    </button>
+
+                    <button class="cancelar" onclick="cancelarVenda()">
+                        Cancelar Venda
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/assets/js/global.js"></script>
+<script src="/assets/js/layout.js"></script>
+<script src="/assets/js/caixa.js"></script>
+
+</body>
+</html>

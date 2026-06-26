@@ -1,0 +1,106 @@
+.pdv {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    margin-bottom: 20px;
+}
+
+.card label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.card input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+}
+
+.card button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #173b7a;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #173b7a;
+    color: white;
+}
+
+th,
+td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.total-card {
+    background: #173b7a;
+    color: white;
+}
+
+.total-card p {
+    margin: 0;
+    font-size: 18px;
+}
+
+.total-card h1 {
+    font-size: 42px;
+    margin: 12px 0 0;
+}
+
+.botoes-caixa button {
+    width: 100%;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.finalizar {
+    background: #198754 !important;
+}
+
+.cancelar {
+    background: #dc3545 !important;
+}
+
+.resumo h2 {
+    color: #198754;
+    font-size: 30px;
+}
+
+td button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 7px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+    .pdv {
+        grid-template-columns: 1fr;
+    }
+}
