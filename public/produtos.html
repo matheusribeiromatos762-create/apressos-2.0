@@ -10,52 +10,40 @@
     <link rel="stylesheet" href="/assets/css/produtos.css">
 </head>
 
-<body>
+<body onload="carregarLayout('produtos')">
 
 <div class="layout">
 
-    <aside class="sidebar">
-
-        <div class="logo">
-            🛒 APRESSOS
-        </div>
-
-        <a href="dashboard.html">🏠 Dashboard</a>
-        <a href="#">🧾 Caixa</a>
-        <a class="ativo" href="produtos.html">📦 Produtos</a>
-        <a href="#">📊 Estoque</a>
-        <a href="#">👥 Clientes</a>
-        <a href="#">🚚 Fornecedores</a>
-        <a href="#">📄 Relatórios</a>
-        <a href="#">👤 Usuários</a>
-        <a href="#">⚙️ Configurações</a>
-
-        <button class="btn-sair">
-            Sair
-        </button>
-
-    </aside>
+    <aside class="sidebar"></aside>
 
     <main class="conteudo">
 
-        <div class="topbar">
+        <header class="topbar">
+            <div>
+                <h1>Cadastro de Produtos</h1>
+                <p>Gerencie os produtos do supermercado</p>
+            </div>
 
-            <h1>Cadastro de Produtos</h1>
-
-        </div>
+            <div class="status">
+                <span class="online"></span>
+                Produtos
+            </div>
+        </header>
 
         <div class="card">
+
+            <h2>Novo Produto</h2>
 
             <div class="linha">
 
                 <div class="campo">
-                    <label>Nome</label>
-                    <input type="text" id="nome">
+                    <label>Nome do Produto</label>
+                    <input type="text" id="nome" placeholder="Ex: Coca-Cola 2L">
                 </div>
 
                 <div class="campo">
                     <label>Código de Barras</label>
-                    <input type="text" id="codigo">
+                    <input type="text" id="codigo" placeholder="Digite ou escaneie o código">
                 </div>
 
             </div>
@@ -65,13 +53,13 @@
                 <div class="campo">
                     <label>Categoria</label>
                     <select id="categoria">
-                        <option>Selecione</option>
+                        <option value="">Selecione</option>
                     </select>
                 </div>
 
                 <div class="campo">
                     <label>Marca</label>
-                    <input type="text" id="marca">
+                    <input type="text" id="marca" placeholder="Ex: Coca-Cola">
                 </div>
 
             </div>
@@ -80,12 +68,12 @@
 
                 <div class="campo">
                     <label>Preço de Custo</label>
-                    <input type="number" id="custo">
+                    <input type="number" id="custo" placeholder="0.00" step="0.01">
                 </div>
 
                 <div class="campo">
                     <label>Preço de Venda</label>
-                    <input type="number" id="preco">
+                    <input type="number" id="preco" placeholder="0.00" step="0.01">
                 </div>
 
             </div>
@@ -93,13 +81,13 @@
             <div class="linha">
 
                 <div class="campo">
-                    <label>Estoque</label>
-                    <input type="number" id="estoque">
+                    <label>Estoque Atual</label>
+                    <input type="number" id="estoque" placeholder="0">
                 </div>
 
                 <div class="campo">
                     <label>Estoque Mínimo</label>
-                    <input type="number" id="estoqueMinimo">
+                    <input type="number" id="estoqueMinimo" placeholder="0">
                 </div>
 
             </div>
@@ -107,10 +95,10 @@
             <div class="botoes">
 
                 <button type="button" class="salvar" id="btnSalvar" onclick="salvarProduto()">
-    Salvar Produto
-</button>
+                    Salvar Produto
+                </button>
 
-                <button class="cancelar">
+                <button type="button" class="cancelar" onclick="limparFormulario()">
                     Limpar
                 </button>
 
@@ -120,7 +108,16 @@
 
         <div class="card">
 
-            <h2>Lista de Produtos</h2>
+            <div class="topo-card">
+                <h2>Lista de Produtos</h2>
+
+                <input
+                    type="text"
+                    id="pesquisaProduto"
+                    placeholder="Pesquisar por nome, código ou categoria"
+                    oninput="filtrarProdutos()"
+                >
+            </div>
 
             <table>
 
@@ -128,7 +125,7 @@
 
                     <tr>
                         <th>Código</th>
-                        <th>Nome</th>
+                        <th>Produto</th>
                         <th>Categoria</th>
                         <th>Preço</th>
                         <th>Estoque</th>
@@ -137,9 +134,7 @@
 
                 </thead>
 
-                <tbody id="listaProdutos">
-
-                </tbody>
+                <tbody id="listaProdutos"></tbody>
 
             </table>
 
@@ -150,6 +145,7 @@
 </div>
 
 <script src="/assets/js/global.js"></script>
+<script src="/assets/js/layout.js"></script>
 <script src="/assets/js/produtos.js"></script>
 
 </body>

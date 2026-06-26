@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const { Pool } = require("pg");
+const db = require("./database/db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,10 +47,12 @@ async function iniciarBanco() {
   console.log("Banco PostgreSQL conectado");
 }
 
+/* PÁGINA INICIAL */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
+/* LOGIN */
 app.post("/api/login", async (req, res) => {
   try {
     const { usuario, senha } = req.body;
@@ -95,15 +98,163 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.get("/api/dashboard", async (req, res) => {
-  res.json({
-    vendasHoje: 0,
-    totalHoje: 0,
-    produtos: 0,
-    estoqueBaixo: 0
+/* DASHBOARD */
+app.get("/api/dashboard", (req, res) => {
+  db.get("SELECT COUNT(*) AS total FROM produtos", [], (erro, produtos) => {
+    if (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
+
+    db.get(
+      "SELECT COUNT(*) AS total FROM produtos WHERE estoque <= estoque_minimo",
+      [],
+      (erro2, estoqueBaixo) => {
+        if (erro2) {
+          return res.status(500).json({ erro: erro2.message });
+        }
+
+        res.json({
+          vendasHoje: 0,
+          totalHoje: 0,
+          produtos: produtos.total || 0,
+          estoqueBaixo: estoqueBaixo.total || 0
+        });
+      }
+    );
   });
 });
 
+/* PRODUTOS - LISTAR */
+app.get("/api/produtos", (req, res) => {
+  db.all("SELECT * FROM produtos ORDER BY id DESC", [], (erro, linhas) => {
+    if (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
+
+    res.json(linhas);
+  });
+});
+
+/* PRODUTOS - CADASTRAR */
+app.post("/api/produtos", (req, res) => {
+  const {
+    codigo_barras,
+    nome,
+    categoria,
+    marca,
+    custo,
+    preco,
+    estoque,
+    estoque_minimo
+  } = req.body;
+
+  if (!nome) {
+    return res.status(400).json({ erro: "Nome do produto é obrigatório" });
+  }
+
+  db.get("SELECT COUNT(*) AS total FROM produtos", [], (erro, resultado) => {
+    if (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
+
+    const proximoCodigo = String(resultado.total + 1).padStart(6, "0");
+
+    db.run(
+      `
+      INSERT INTO produtos
+      (codigo_interno, codigo_barras, nome, categoria, marca, custo, preco, estoque, estoque_minimo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      [
+        proximoCodigo,
+        codigo_barras || "",
+        nome || "",
+        categoria || "",
+        marca || "",
+        Number(custo || 0),
+        Number(preco || 0),
+        Number(estoque || 0),
+        Number(estoque_minimo || 0)
+      ],
+      function (erro) {
+        if (erro) {
+          return res.status(500).json({ erro: erro.message });
+        }
+
+        res.json({
+          sucesso: true,
+          id: this.lastID,
+          codigo_interno: proximoCodigo
+        });
+      }
+    );
+  });
+});
+
+/* PRODUTOS - EXCLUIR */
+app.delete("/api/produtos/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.run("DELETE FROM produtos WHERE id = ?", [id], function (erro) {
+    if (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
+
+    res.json({ sucesso: true });
+  });
+});
+
+/* CATEGORIAS - LISTAR */
+app.get("/api/categorias", (req, res) => {
+  db.all("SELECT * FROM categorias ORDER BY nome ASC", [], (erro, linhas) => {
+    if (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
+
+    res.json(linhas);
+  });
+});
+
+/* CATEGORIAS - CADASTRAR */
+app.post("/api/categorias", (req, res) => {
+  const { nome } = req.body;
+
+  if (!nome) {
+    return res.status(400).json({ erro: "Nome da categoria é obrigatório" });
+  }
+
+  db.run(
+    "INSERT INTO categorias (nome) VALUES (?)",
+    [nome.toUpperCase()],
+    function (erro) {
+      if (erro) {
+        return res.status(500).json({
+          erro: "Categoria já existe ou erro ao salvar"
+        });
+      }
+
+      res.json({
+        sucesso: true,
+        id: this.lastID
+      });
+    }
+  );
+});
+
+/* CATEGORIAS - EXCLUIR */
+app.delete("/api/categorias/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.run("DELETE FROM categorias WHERE id = ?", [id], function (erro) {
+    if (erro) {
+      return res.status(500).json({ erro: erro.message });
+    }
+
+    res.json({ sucesso: true });
+  });
+});
+
+/* INICIAR SERVIDOR */
 iniciarBanco()
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
