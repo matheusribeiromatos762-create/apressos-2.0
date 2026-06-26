@@ -61,7 +61,6 @@ app.get("/api/dashboard", (req, res) => {
 });
 
 /* PRODUTOS */
-
 app.get("/api/produtos", (req, res) => {
     db.all("SELECT * FROM produtos ORDER BY id DESC", [], (erro, linhas) => {
         if (erro) return res.status(500).json({ erro: erro.message });
@@ -168,7 +167,6 @@ app.put("/api/produtos/:id/estoque", (req, res) => {
 });
 
 /* CATEGORIAS */
-
 app.get("/api/categorias", (req, res) => {
     db.all("SELECT * FROM categorias ORDER BY nome ASC", [], (erro, linhas) => {
         if (erro) return res.status(500).json({ erro: erro.message });
@@ -209,7 +207,6 @@ app.delete("/api/categorias/:id", (req, res) => {
 });
 
 /* VENDAS */
-
 app.post("/api/vendas", (req, res) => {
     const { itens, total, valor_recebido, troco, forma_pagamento } = req.body;
 
@@ -275,6 +272,17 @@ app.get("/api/vendas", (req, res) => {
         if (erro) return res.status(500).json({ erro: erro.message });
         res.json(linhas);
     });
+});
+
+app.get("/api/vendas/:id/itens", (req, res) => {
+    db.all(
+        "SELECT * FROM venda_itens WHERE venda_id = ? ORDER BY id ASC",
+        [req.params.id],
+        (erro, linhas) => {
+            if (erro) return res.status(500).json({ erro: erro.message });
+            res.json(linhas);
+        }
+    );
 });
 
 app.listen(PORT, "0.0.0.0", () => {

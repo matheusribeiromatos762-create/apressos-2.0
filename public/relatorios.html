@@ -53,6 +53,7 @@
                         <th>Troco</th>
                         <th>Pagamento</th>
                         <th>Data</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
 
@@ -60,6 +61,28 @@
             </table>
         </section>
     </main>
+</div>
+
+<div id="modalItensVenda" class="modal-relatorio">
+    <div class="modal-relatorio-box">
+        <h2 id="tituloItensVenda">Itens da Venda</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Preço</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaItensVenda"></tbody>
+        </table>
+
+        <button onclick="fecharItensVenda()">Fechar</button>
+    </div>
 </div>
 
 <script src="/assets/js/global.js"></script>
