@@ -56,8 +56,21 @@ db.serialize(() => {
     `);
 
     db.run(`
-        ALTER TABLE vendas ADD COLUMN forma_pagamento TEXT DEFAULT 'DINHEIRO'
-    `, () => {});
+        CREATE TABLE IF NOT EXISTS clientes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            cpf TEXT,
+            telefone TEXT,
+            whatsapp TEXT,
+            email TEXT,
+            endereco TEXT,
+            cidade TEXT,
+            observacoes TEXT,
+            limite_fiado REAL DEFAULT 0,
+            saldo_devedor REAL DEFAULT 0,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
 });
 
 module.exports = db;
