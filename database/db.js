@@ -71,6 +71,22 @@ db.serialize(() => {
             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS fornecedores (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            cnpj TEXT,
+            telefone TEXT,
+            whatsapp TEXT,
+            email TEXT,
+            representante TEXT,
+            endereco TEXT,
+            cidade TEXT,
+            observacoes TEXT,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
 });
 
 module.exports = db;

@@ -7,6 +7,7 @@ const produtosRoutes = require("./routes/produtos");
 const categoriasRoutes = require("./routes/categorias");
 const vendasRoutes = require("./routes/vendas");
 const clientesRoutes = require("./routes/clientes");
+const fornecedoresRoutes = require("./routes/fornecedores");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,6 +42,7 @@ app.use("/api/produtos", produtosRoutes);
 app.use("/api/categorias", categoriasRoutes);
 app.use("/api/vendas", vendasRoutes);
 app.use("/api/clientes", clientesRoutes);
+app.use("/api/fornecedores", fornecedoresRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
     console.log("====================================");

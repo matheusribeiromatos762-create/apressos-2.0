@@ -12,7 +12,7 @@ function carregarLayout(paginaAtual) {
         <a class="${paginaAtual === "categorias" ? "ativo" : ""}" href="categorias.html">🏷️ Categorias</a>
         <a class="${paginaAtual === "estoque" ? "ativo" : ""}" href="estoque.html">📊 Estoque</a>
         <a class="${paginaAtual === "clientes" ? "ativo" : ""}" href="clientes.html">👥 Clientes</a>
-        <a href="#">🚚 Fornecedores</a>
+        <a class="${paginaAtual === "fornecedores" ? "ativo" : ""}" href="fornecedores.html">🚚 Fornecedores</a>
         <a class="${paginaAtual === "relatorios" ? "ativo" : ""}" href="relatorios.html">📄 Relatórios</a>
         <a href="#">👤 Usuários</a>
         <a href="#">⚙️ Configurações</a>

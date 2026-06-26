@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Fornecedores - Apressos 2.0</title>
+
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/assets/css/fornecedores.css">
+</head>
+
+<body onload="carregarLayout('fornecedores')">
+
+<div class="layout">
+    <aside class="sidebar"></aside>
+
+    <main class="conteudo">
+        <header class="topbar">
+            <div>
+                <h1>Fornecedores</h1>
+                <p>Cadastro de fornecedores e representantes</p>
+            </div>
+
+            <div class="status">
+                <span class="online"></span>
+                Fornecedores
+            </div>
+        </header>
+
+        <section class="card">
+            <h2 id="tituloFormulario">Novo Fornecedor</h2>
+
+            <input type="hidden" id="fornecedorId">
+
+            <div class="linha">
+                <div class="campo">
+                    <label>Nome / Razão Social</label>
+                    <input type="text" id="nome" placeholder="Nome do fornecedor">
+                </div>
+
+                <div class="campo">
+                    <label>CNPJ</label>
+                    <input type="text" id="cnpj" placeholder="00.000.000/0000-00">
+                </div>
+            </div>
+
+            <div class="linha">
+                <div class="campo">
+                    <label>Telefone</label>
+                    <input type="text" id="telefone" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="campo">
+                    <label>WhatsApp</label>
+                    <input type="text" id="whatsapp" placeholder="(00) 00000-0000">
+                </div>
+            </div>
+
+            <div class="linha">
+                <div class="campo">
+                    <label>E-mail</label>
+                    <input type="email" id="email" placeholder="fornecedor@email.com">
+                </div>
+
+                <div class="campo">
+                    <label>Representante</label>
+                    <input type="text" id="representante" placeholder="Nome do vendedor/representante">
+                </div>
+            </div>
+
+            <div class="linha">
+                <div class="campo">
+                    <label>Endereço</label>
+                    <input type="text" id="endereco" placeholder="Rua, número, bairro">
+                </div>
+
+                <div class="campo">
+                    <label>Cidade</label>
+                    <input type="text" id="cidade" placeholder="Cidade">
+                </div>
+            </div>
+
+            <div class="linha">
+                <div class="campo">
+                    <label>Observações</label>
+                    <input type="text" id="observacoes" placeholder="Observações sobre o fornecedor">
+                </div>
+            </div>
+
+            <div class="botoes">
+                <button class="salvar" onclick="salvarFornecedor()">Salvar Fornecedor</button>
+                <button class="cancelar" onclick="limparFormulario()">Limpar</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="topo-card">
+                <h2>Lista de Fornecedores</h2>
+
+                <input
+                    type="text"
+                    id="pesquisaFornecedor"
+                    placeholder="Pesquisar por nome, CNPJ, telefone ou representante"
+                    oninput="filtrarFornecedores()"
+                >
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fornecedor</th>
+                        <th>CNPJ</th>
+                        <th>Telefone</th>
+                        <th>WhatsApp</th>
+                        <th>Representante</th>
+                        <th>Cidade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaFornecedores"></tbody>
+            </table>
+        </section>
+    </main>
+</div>
+
+<script src="/assets/js/global.js"></script>
+<script src="/assets/js/layout.js"></script>
+<script src="/assets/js/fornecedores.js"></script>
+
+</body>
+</html>
